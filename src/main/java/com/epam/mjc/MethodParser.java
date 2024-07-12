@@ -1,5 +1,8 @@
 package com.epam.mjc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MethodParser {
 
     /**
@@ -20,6 +23,44 @@ public class MethodParser {
      * @return {@link MethodSignature} object filled with parsed values from source string
      */
     public MethodSignature parseFunction(String signatureString) {
-        throw new UnsupportedOperationException("You should implement this method.");
+
+            String[]s = signatureString.split(" ");
+            if (s.length<2){
+                throw new UnsupportedOperationException();
+            }
+            for(int i = 0; i < s.length;i++){
+                System.out.println(s[i]);
+            }
+             boolean hasAccessModifier = false;
+            List<MethodSignature.Argument>arguments=new ArrayList<>();
+            String accessModifier="", methodName, returnType;
+            if (s[0].equals("private")||s[0].equals("public")||s[0].equals("protected")){
+                hasAccessModifier=true;
+                accessModifier = s[0];
+                returnType=s[1];
+                methodName=s[2].split("\\(")[0];
+            }
+            else{
+                returnType=s[0];
+                methodName=s[1].split("\\(")[0];
+            }
+            //first arg
+            String[]splitString = signatureString.split("\\(");
+            String[]argumentsArray=splitString[1].split(", ");
+            if(!splitString[1].equals(")")){
+                for(int i =0; i <argumentsArray.length-1;i++ ){
+                    arguments.add(new MethodSignature.Argument(argumentsArray[i].split(" ")[0],argumentsArray[i].split(" ")[1]));
+                }
+                arguments.add(new MethodSignature.Argument(argumentsArray[argumentsArray.length-1].split(" ")[0],argumentsArray[argumentsArray.length-1].split(" ")[1].split("\\)")[0]));
+            }
+
+
+            MethodSignature methodSignature=new MethodSignature(methodName, arguments);
+            if (hasAccessModifier) methodSignature.setAccessModifier(accessModifier);
+            methodSignature.setReturnType(returnType);
+
+        return methodSignature;
+
     }
+
 }
